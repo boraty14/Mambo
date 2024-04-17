@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game.Scripts.Timer
 {
-    public class Timer : ITimer
+    public class Timer : MonoBehaviour
     {
         public event Action<int> OnTimerUpdate;
         public event Action OnTimeIsUp;

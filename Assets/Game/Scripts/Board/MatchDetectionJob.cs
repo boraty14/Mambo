@@ -1,4 +1,4 @@
-using Game.Scripts.Tile;
+using Game.Scripts.Piece;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -10,7 +10,7 @@ namespace Game.Scripts.Board
     public struct MatchDetectionJob : IJob
     {
         [ReadOnly]
-        public NativeArray<ETile> Board; // The game board
+        public NativeArray<EPiece> Board; // The game board
 
         public int BoardWidth; // Width of the game board
         public int BoardHeight; // Height of the game board
@@ -26,7 +26,7 @@ namespace Game.Scripts.Board
                 for (int x = 0; x < BoardWidth; x++)
                 {
                     int index = y * BoardWidth + x;
-                    ETile currentTileType = Board[index];
+                    EPiece currentTileType = Board[index];
 
                     // Check horizontal matches
                     int horizontalCount = CheckMatches(new int2(x, y), new int2(1, 0), currentTileType);
@@ -55,7 +55,7 @@ namespace Game.Scripts.Board
         }
 
         [BurstCompile]
-        private int CheckMatches(int2 startPosition, int2 direction, ETile targetType)
+        private int CheckMatches(int2 startPosition, int2 direction, EPiece targetType)
         {
             int count = 0;
             int2 currentPosition = startPosition;

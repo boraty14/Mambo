@@ -7,51 +7,23 @@ namespace Game.Scripts.Timer
     {
         [SerializeField] private TMP_Text _timeText;
         [SerializeField] private GameObject _gameObject;
-        private ITimer _timer;
+        [SerializeField] private Timer _timer;
 
-        private void Start()
-        {
-            _timer = Provider.ServiceLocator.GetService<ITimer>();
-            RegisterEvents();
-        }
-        
         private void OnEnable()
         {
-            RegisterEvents();
+            _timer.OnTimerUpdate += OnTimerUpdate;
+            _timer.OnTimeIsUp += OnTimeIsUp;
         }
-        
+
         private void OnDisable()
         {
-            UnregisterEvents();
+            _timer.OnTimerUpdate -= OnTimerUpdate;
+            _timer.OnTimeIsUp -= OnTimeIsUp;
         }
 
         public void Toggle(bool state)
         {
             _gameObject.SetActive(state);
-        }
-
-        private void RegisterEvents()
-        {
-            if (_timer == null)
-            {
-                return;
-            }
-            
-            _timer.OnTimerUpdate -= OnTimerUpdate;
-            _timer.OnTimeIsUp -= OnTimeIsUp;
-            _timer.OnTimerUpdate += OnTimerUpdate;
-            _timer.OnTimeIsUp += OnTimeIsUp;
-        }
-        
-        private void UnregisterEvents()
-        {
-            if (_timer == null)
-            {
-                return;
-            }
-            
-            _timer.OnTimerUpdate -= OnTimerUpdate;
-            _timer.OnTimeIsUp -= OnTimeIsUp;
         }
 
         private void OnTimerUpdate(int duration)

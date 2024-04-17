@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Height: 11
   Width: 9
+  BoardLengthFactor: 0.5
+  BoardEdgeOffset: 0.2
   TileInteractionPercentage: 0.825
-  TileSize: 1
+  TileSize: 0.575

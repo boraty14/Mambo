@@ -1,8 +1,9 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Game.Scripts.Score
 {
-    public class Scoreboard : IScoreboard
+    public class Scoreboard : MonoBehaviour
     {
         public event Action<int> OnScoreUpdate;
 

@@ -97,4 +97,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a214afd89474470810f4345588069e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Sprite: {fileID: 5188483678652548252}
+  _transform: {fileID: 5912957832787689615}

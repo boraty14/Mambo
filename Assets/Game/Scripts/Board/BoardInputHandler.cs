@@ -21,6 +21,7 @@ namespace Game.Scripts.Board
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            var boardPosition = GetBoardPosition(eventData);
             Debug.Log(GetBoardPosition(eventData));
             OnPointerDownEvent?.Invoke(eventData);
         }

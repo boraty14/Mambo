@@ -2,20 +2,20 @@ using System;
 using PrimeTween;
 using UnityEngine;
 
-namespace Game.Scripts.Tile
+namespace Game.Scripts.Piece
 {
     [CreateAssetMenu]
-    public class TileSettings : ScriptableObject
+    public class PieceSettings : ScriptableObject
     {
         public float MoveDuration;
         public Ease MoveEase;
-        public TileProperties[] TilesProperties;
+        public PieceProperties[] PiecesProperties;
     }
 
     [Serializable]
-    public class TileProperties
+    public class PieceProperties
     {
-        public ETile Type;
+        public EPiece Type;
         public Sprite Sprite;
     }
 }

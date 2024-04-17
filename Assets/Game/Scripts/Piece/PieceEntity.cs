@@ -2,17 +2,17 @@ using Cysharp.Threading.Tasks;
 using PrimeTween;
 using UnityEngine;
 
-namespace Game.Scripts.Tile
+namespace Game.Scripts.Piece
 {
-    public class TileBehaviour : MonoBehaviour
+    public class PieceEntity : MonoBehaviour
     {
-        [SerializeField] private TileSettings _tileSettings;
+        [SerializeField] private PieceSettings _tileSettings;
         [SerializeField] private Transform _transform;
         [SerializeField] private SpriteRenderer _spriteRenderer;
         
-        public ETile TileType { get; private set; }
+        public EPiece TileType { get; private set; }
 
-        public void SetTile(ETile tileType, Sprite sprite)
+        public void SetTile(EPiece tileType, Sprite sprite)
         {
             TileType = tileType;
             _spriteRenderer.sprite = sprite;

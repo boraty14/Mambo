@@ -1,6 +1,6 @@
-namespace Game.Scripts.Tile
+namespace Game.Scripts.Piece
 {
-    public enum ETile
+    public enum EPiece
     {
         Blue,
         Green,
