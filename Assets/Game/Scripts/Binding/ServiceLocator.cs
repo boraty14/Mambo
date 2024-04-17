@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Game.Scripts.Binding
 {
-    internal class ServiceLocator : IServiceLocator
+    public class ServiceLocator : IServiceLocator
     {
         private readonly Dictionary<Type, object> _services = new();
 
         public void AddService<TService, TInstance>(TInstance instance)
             where TService : IService
-            where TInstance : MonoBehaviour, TService
+            where TInstance : TService
         {
             _services[typeof(TService)] = instance;
         }
