@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ca5f6de94bae114e88194e753a2f273, type: 3}
   m_Name: TileSettings
   m_EditorClassIdentifier: 
-  MoveDuration: 0.1
+  MoveDuration: 0.2
   MoveEase: 2
-  TilesProperties:
+  PiecesProperties:
   - Type: 0
     Sprite: {fileID: 21300008, guid: 51e2a399831333b478ec978ee598bf0e, type: 3}
   - Type: 1

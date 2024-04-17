@@ -9,7 +9,7 @@ namespace Game.Scripts.Piece
         [SerializeField] private PieceEntity _piecePrefab;
         [SerializeField] private PieceSettings _pieceSettings;
 
-        private readonly Dictionary<EPiece, PieceProperties> _piecesProperties;
+        private readonly Dictionary<EPiece, PieceProperties> _piecesProperties = new();
 
         private void Awake()
         {

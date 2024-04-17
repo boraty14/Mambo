@@ -11,6 +11,5 @@ namespace Game.Scripts.Board
             _transform.position = position;
             _transform.localScale = scale;
         }
-
     }
 }

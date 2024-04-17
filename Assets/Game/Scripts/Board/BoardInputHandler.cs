@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -8,11 +7,9 @@ namespace Game.Scripts.Board
     {
         [SerializeField] private BoardSettings _boardSettings;
         [SerializeField] private Transform _boardParent;
-        private bool _isInputEnabled;
-        public event Action<PointerEventData> OnPointerDownEvent;
-        public event Action<PointerEventData> OnPointerUpEvent;
-        public event Action<PointerEventData> OnDragEvent;
+        
         private Camera _camera;
+        private int _selectedPieceIndex = -1;
 
         private void Start()
         {
@@ -22,18 +19,21 @@ namespace Game.Scripts.Board
         public void OnPointerDown(PointerEventData eventData)
         {
             var boardPosition = GetBoardPosition(eventData);
-            Debug.Log(GetBoardPosition(eventData));
-            OnPointerDownEvent?.Invoke(eventData);
+            
+            Debug.Log(boardPosition);
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
-            OnPointerUpEvent?.Invoke(eventData);
+            
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            OnDragEvent?.Invoke(eventData);
+            if (_selectedPieceIndex == -1)
+            {
+                return;
+            }
         }
 
         private Vector3 GetBoardPosition(PointerEventData eventData)

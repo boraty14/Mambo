@@ -11,30 +11,39 @@ namespace Game.Scripts.Board
         [SerializeField] private BoardSettings _boardSettings;
         [SerializeField] private TileBackgroundSpawner _tileBackgroundSpawner;
         [SerializeField] private SpriteRenderer _backgroundSprite;
-        private NativeArray<EPiece> _boardData;
-        private NativeList<int2> _matchPositions;
+        [SerializeField] private BoxCollider2D _boardCollider;
+        
         private TileBackgroundEntity[] _tileBackgrounds;
         private int _tileCount;
         private float _boardStartX;
         private float _boardStartY;
+        
+        private NativeArray<EPiece> _boardData;
+        private NativeList<int2> _matchPositions;
+        
 
         private void Awake()
         {
-
             _tileCount = _boardSettings.Height * _boardSettings.Width;
             _tileBackgrounds = new TileBackgroundEntity[_tileCount];
             
             var boardLengthFactor = _boardSettings.BoardLengthFactor;
             _boardStartX = -(_boardSettings.Width - 1) * 0.5f * boardLengthFactor;
             _boardStartY = -(_boardSettings.Height - 1) * 0.5f * boardLengthFactor;
-            _backgroundSprite.size = new Vector2(boardLengthFactor * _boardSettings.Width + _boardSettings.BoardEdgeOffset,
-                boardLengthFactor * _boardSettings.Height + _boardSettings.BoardEdgeOffset);
+            
+            var sizeX = boardLengthFactor * _boardSettings.Width + _boardSettings.BoardEdgeOffset;
+            var sizeY = boardLengthFactor * _boardSettings.Height + _boardSettings.BoardEdgeOffset;
+            var sizeVector = new Vector2(sizeX, sizeY);
+
+            _backgroundSprite.size = sizeVector;
+            _boardCollider.size = sizeVector;
         }
 
         private void OnEnable()
         {
             SignalBus.StartGame += OnStartGame;
             SignalBus.EndGame += OnEndGame;
+
         }
 
         private void OnDisable()
@@ -45,6 +54,9 @@ namespace Game.Scripts.Board
         
         private void OnStartGame()
         {
+            _boardCollider.enabled = true;
+            _backgroundSprite.enabled = true;
+            
             Vector3 scale = Vector3.one * _boardSettings.TileSize;
                 
             for (int i = 0; i < _tileCount; i++)
@@ -67,6 +79,9 @@ namespace Game.Scripts.Board
         
         private void OnEndGame()
         {
+            _boardCollider.enabled = false;
+            _backgroundSprite.enabled = false;
+            
             for (int i = 0; i < _tileCount; i++)
             {
                 _tileBackgroundSpawner.ReleaseTileBackground(_tileBackgrounds[i]);
