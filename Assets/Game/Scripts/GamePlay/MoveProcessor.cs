@@ -14,6 +14,7 @@ namespace Game.Scripts.GamePlay
     {
         [SerializeField] private BoardEntity _boardEntity;
         [SerializeField] private PieceSpawner _pieceSpawner;
+        [SerializeField] private BlastEffectSpawner _blastEffectSpawner;
 
         private PieceEntity[] _pieces;
         private BoardLevelData _boardLevelData;
@@ -211,8 +212,10 @@ namespace Game.Scripts.GamePlay
 
         private async UniTask BlastPiece(int index)
         {
-            await _pieces[index].Blast();
-            _pieceSpawner.ReleasePiece(_pieces[index]);
+            var piece = _pieces[index];
+            _blastEffectSpawner.PlayBlastEffect(piece).Forget();
+            await piece.Blast();
+            _pieceSpawner.ReleasePiece(piece);
             _pieces[index] = null;
         }
 

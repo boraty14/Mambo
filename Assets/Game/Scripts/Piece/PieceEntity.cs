@@ -10,7 +10,6 @@ namespace Game.Scripts.Piece
         [SerializeField] private PieceSettings _pieceSettings;
         [SerializeField] private Transform _transform;
         [SerializeField] private SpriteRenderer _spriteRenderer;
-        [SerializeField] private BlastEffectEntity _blastEffect;
         
         private const float MinMoveDistance = 0.01f;
 
@@ -44,10 +43,8 @@ namespace Game.Scripts.Piece
 
         public async UniTask Blast()
         {
-            _blastEffect.SetEffect(PieceType);
             await Tween.Scale(_transform, _pieceSettings.BlastScale, _pieceSettings.BlastDuration,
                 _pieceSettings.BlastEase);
-            //TODO add particle pool? latest thing!
         }
 
         public async UniTask MoveToPosition(Vector3 target)
