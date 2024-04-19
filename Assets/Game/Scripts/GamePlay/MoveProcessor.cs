@@ -20,8 +20,6 @@ namespace Game.Scripts.GamePlay
 
         private NativeArray<EPiece> _piecesData;
         private NativeArray<bool> _matchBoardData;
-        private NativeArray<int> _newBoardIndices;
-        private int[] _columnBlastAmount;
         private bool _isPieceMoving;
 
         private readonly List<UniTask> _blastPieceTasks = new();
@@ -49,8 +47,6 @@ namespace Game.Scripts.GamePlay
             DisposeArrays();
             _piecesData = new NativeArray<EPiece>(_boardLevelData.TileCount, Allocator.Persistent);
             _matchBoardData = new NativeArray<bool>(_boardLevelData.TileCount, Allocator.Persistent);
-            _newBoardIndices = new NativeArray<int>(_boardLevelData.TileCount, Allocator.Persistent);
-            _columnBlastAmount = new int[_boardLevelData.Width];
 
             _pieces = new PieceEntity[_boardLevelData.TileCount];
             InitializePieces();
@@ -180,7 +176,6 @@ namespace Game.Scripts.GamePlay
             {
                 Board = _piecesData,
                 MatchBoard = _matchBoardData,
-                NewBoardIndices = _newBoardIndices,
                 BoardWidth = _boardLevelData.Width,
                 BoardHeight = _boardLevelData.Height,
             };
@@ -195,12 +190,6 @@ namespace Game.Scripts.GamePlay
             {
                 _piecesData[i] = _pieces[i].PieceType;
                 _matchBoardData[i] = false;
-                _newBoardIndices[i] = i;
-            }
-
-            for (int i = 0; i < _boardLevelData.Width; i++)
-            {
-                _columnBlastAmount[i] = 0;
             }
         }
 
@@ -223,7 +212,6 @@ namespace Game.Scripts.GamePlay
             {
                 if (_matchBoardData[i])
                 {
-                    _columnBlastAmount[i % _boardLevelData.Width] += 1;
                     _blastPieceTasks.Add(BlastPiece(i));
                 }
             }
@@ -243,38 +231,45 @@ namespace Game.Scripts.GamePlay
         {
             for (int i = 0; i < _boardLevelData.TileCount; i++)
             {
-                int newIndex = _newBoardIndices[i];
-                if (newIndex == i || _pieces[newIndex] != null)
+                if (_pieces[i] == null)
                 {
                     continue;
                 }
                 
-                Debug.Log($"old {i} new {newIndex}");
-                PieceEntity temp = _pieces[i];
-                _pieces[i] = _pieces[newIndex];
-                _pieces[newIndex] = temp;
+                int fallAmount = 0;
+                for (int j = i - _boardLevelData.Width; j >= 0; j -= _boardLevelData.Width)
+                {
+                    if (_matchBoardData[j])
+                    {
+                        fallAmount++;
+                    }                    
+                }
+
+                _pieces[i - fallAmount * _boardLevelData.Width] = _pieces[i];
             }
         }
 
         private void GenerateNewPieces()
         {
-            for (int i = _boardLevelData.TileCount - 1; i >= 0; i--)
+            for (int i = 0; i < _boardLevelData.Width; i++)
             {
-                if (_pieces[i] != null)
+                int generateAmount = 0;
+                
+                for (int j = 0; j < _boardLevelData.Height; j++)
                 {
-                    continue;
+                    if (_matchBoardData[i + j * _boardLevelData.Width])
+                    {
+                        generateAmount++;
+                    }
                 }
 
-                var piece = _pieceSpawner.GetRandomPiece();
-                int columnIndex = i % _boardLevelData.Width;
-
-                int spawnIndex = columnIndex + _boardLevelData.TileCount +
-                                 (_boardLevelData.Width * (_columnBlastAmount[columnIndex] - 1));
-                
-                piece.SetToPosition(_boardEntity.GetTilePosition(spawnIndex));
-                _pieces[i] = piece;
-                _pieces[i].name = spawnIndex.ToString();
-                _columnBlastAmount[columnIndex] -= 1;
+                for (int j = 0; j < generateAmount; j++)
+                {
+                    var piece = _pieceSpawner.GetRandomPiece();
+                    int spawnIndex = i + _boardLevelData.TileCount + _boardLevelData.Width * j;
+                    piece.SetToPosition(_boardEntity.GetTilePosition(spawnIndex));
+                    _pieces[spawnIndex - generateAmount * _boardLevelData.Width] = piece;
+                }
             }
         }
 
@@ -282,10 +277,6 @@ namespace Game.Scripts.GamePlay
         {
             for (int i = 0; i < _boardLevelData.TileCount; i++)
             {
-                if (_newBoardIndices[i] == i)
-                {
-                    continue;
-                }
                 _movePiecesTasks.Add(_pieces[i].MoveToPosition(_boardEntity.GetTilePosition(i)));
             }
 
@@ -297,7 +288,6 @@ namespace Game.Scripts.GamePlay
         {
             _piecesData.Dispose();
             _matchBoardData.Dispose();
-            _newBoardIndices.Dispose();
         }
 
         private void OnDestroy()

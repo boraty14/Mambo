@@ -19,7 +19,6 @@ namespace Game.Scripts.GamePlay
     {
         [ReadOnly] public NativeArray<EPiece> Board;
         [WriteOnly] public NativeArray<bool> MatchBoard;
-        [WriteOnly] public NativeArray<int> NewBoardIndices;
         
         [ReadOnly] public int BoardWidth;
         [ReadOnly] public int BoardHeight;
@@ -46,7 +45,7 @@ namespace Game.Scripts.GamePlay
                         for (int i = 0; i < horizontalCount; i++)
                         {
                             int matchIndex = y * BoardWidth + (x + i);
-                            SetNewIndicesAfterBlast(matchIndex);
+                            MatchBoard[matchIndex] = true;
                             //MatchPositions.Add(new int2(x - i, y));
                         }
                     }
@@ -56,7 +55,7 @@ namespace Game.Scripts.GamePlay
                         for (int i = 0; i < verticalCount; i++)
                         {
                             int matchIndex = (y + i) * BoardWidth + x;
-                            SetNewIndicesAfterBlast(matchIndex);
+                            MatchBoard[matchIndex] = true;
                             //MatchPositions.Add(new int2(x, y - i));
                         }
                     }
@@ -64,18 +63,6 @@ namespace Game.Scripts.GamePlay
             }
         }
 
-        [BurstCompile]
-        private void SetNewIndicesAfterBlast(int index)
-        {
-            MatchBoard[index] = true;
-            int tileCount = NewBoardIndices.Length;
-            index += BoardWidth;
-            while (index < tileCount)
-            {
-                NewBoardIndices[index] = index-BoardWidth;
-                index += BoardWidth;
-            }
-        }
 
         [BurstCompile]
         private int CheckMatches(int2 startPosition, int2 direction, EPiece targetType)

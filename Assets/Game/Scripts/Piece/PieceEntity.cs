@@ -10,6 +10,8 @@ namespace Game.Scripts.Piece
         [SerializeField] private PieceSettings _pieceSettings;
         [SerializeField] private Transform _transform;
         [SerializeField] private SpriteRenderer _spriteRenderer;
+        
+        private const float MinMoveDistance = 0.01f;
 
         public EPiece PieceType { get; private set; }
         private Dictionary<EPiece, PieceProperties> _pieceProperties;
@@ -49,6 +51,10 @@ namespace Game.Scripts.Piece
         public async UniTask MoveToPosition(Vector3 target)
         {
             var distance = Vector3.Distance(_transform.localPosition, target);
+            if (distance <= MinMoveDistance)
+            {
+                return;
+            }
             await Tween.LocalPosition(_transform, target, _pieceSettings.MoveDuration * distance,
                 _pieceSettings.MoveEase);
         }
