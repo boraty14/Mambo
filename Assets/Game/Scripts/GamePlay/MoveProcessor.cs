@@ -20,7 +20,6 @@ namespace Game.Scripts.GamePlay
 
         private NativeArray<EPiece> _piecesData;
         private NativeArray<bool> _matchBoardData;
-        private bool _isPieceMoving;
 
         private readonly List<UniTask> _blastPieceTasks = new();
         private readonly List<UniTask> _movePiecesTasks = new();
@@ -95,13 +94,6 @@ namespace Game.Scripts.GamePlay
 
         public async UniTask ProcessMove(int firstPieceIndex, int secondPieceIndex)
         {
-            if (_isPieceMoving)
-            {
-                return;
-            }
-
-            _isPieceMoving = true;
-
             await SwapPieces(firstPieceIndex, secondPieceIndex);
             CheckMatches();
             if (!IsMatch())
@@ -109,7 +101,6 @@ namespace Game.Scripts.GamePlay
                 await SwapPieces(firstPieceIndex, secondPieceIndex);
                 ToggleSelect(firstPieceIndex,false);
                 ToggleSelect(secondPieceIndex,false);
-                _isPieceMoving = false;
                 return;
             }
 
@@ -121,8 +112,6 @@ namespace Game.Scripts.GamePlay
                 await ProcessBlast();
                 CheckMatches();
             }
-
-            _isPieceMoving = false;
         }
         
         private async UniTask SwapPieces(int firstPieceIndex, int secondPieceIndex)

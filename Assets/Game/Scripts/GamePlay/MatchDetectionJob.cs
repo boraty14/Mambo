@@ -4,14 +4,6 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-// first blast
-// then copy board to pieces array (CHECK if null)
-// then check for nulls and generate random for those
-// last, fall each pieces to its own index
-
-
-// check match one last time, if no match, shuffle (while repeat)
-
 namespace Game.Scripts.GamePlay
 {
     [BurstCompile]
@@ -46,7 +38,6 @@ namespace Game.Scripts.GamePlay
                         {
                             int matchIndex = y * BoardWidth + (x + i);
                             MatchBoard[matchIndex] = true;
-                            //MatchPositions.Add(new int2(x - i, y));
                         }
                     }
 
@@ -56,13 +47,11 @@ namespace Game.Scripts.GamePlay
                         {
                             int matchIndex = (y + i) * BoardWidth + x;
                             MatchBoard[matchIndex] = true;
-                            //MatchPositions.Add(new int2(x, y - i));
                         }
                     }
                 }
             }
         }
-
 
         [BurstCompile]
         private int CheckMatches(int2 startPosition, int2 direction, EPiece targetType)
