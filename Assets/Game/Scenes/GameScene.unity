@@ -688,7 +688,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d449207068ed2fa47bdd9bed001db45d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _boardSettings: {fileID: 11400000, guid: 6b63e0af3243c294b95979d15f3a3748, type: 2}
+  _boardEntity: {fileID: 892982265}
   _boardParent: {fileID: 892982264}
 --- !u!4 &892982264
 Transform:
@@ -1505,7 +1505,7 @@ GameObject:
   - component: {fileID: 1435830678}
   - component: {fileID: 1435830679}
   m_Layer: 0
-  m_Name: PieceMover
+  m_Name: PieceHandler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

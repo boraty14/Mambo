@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Game.Scripts.GamePlay
 {
-    public class PieceMover : MonoBehaviour
+    public class MoveProcessor : MonoBehaviour
     {
         [SerializeField] private BoardEntity _boardEntity;
         [SerializeField] private PieceSpawner _pieceSpawner;
@@ -19,9 +19,12 @@ namespace Game.Scripts.GamePlay
         private NativeArray<EPiece> _piecesData;
         private NativeArray<bool> _matchBoardData;
         private NativeArray<int> _newBoardIndices;
+        private int[] _columnBlastAmount;
+        private bool _isPieceMoving;
 
         private readonly List<UniTask> _blastPieceTasks = new();
-        
+        private readonly List<UniTask> _movePiecesTasks = new();
+        private readonly List<UniTask> _swapPiecesTasks = new();
         private const int RandomSeed = 9999;
 
 
@@ -40,9 +43,13 @@ namespace Game.Scripts.GamePlay
         private void OnSetBoardLevelData(BoardLevelData boardLevelData)
         {
             _boardLevelData = boardLevelData;
+
+            DisposeArrays();
             _piecesData = new NativeArray<EPiece>(_boardLevelData.TileCount, Allocator.Persistent);
             _matchBoardData = new NativeArray<bool>(_boardLevelData.TileCount, Allocator.Persistent);
             _newBoardIndices = new NativeArray<int>(_boardLevelData.TileCount, Allocator.Persistent);
+            _columnBlastAmount = new int[_boardLevelData.Width];
+
             _pieces = new PieceEntity[_boardLevelData.TileCount];
             InitializePieces();
         }
@@ -71,29 +78,75 @@ namespace Game.Scripts.GamePlay
                 ShufflePieces();
                 CheckMatches();
             }
-            
+
             for (int i = 0; i < _boardLevelData.TileCount; i++)
             {
                 _pieces[i].SetToPosition(_boardEntity.GetTilePosition(i));
             }
         }
 
-        private void ProcessMove()
+        public void ToggleSelect(int index, bool state)
         {
-            CheckMatches();
-            if (IsMatch())
+            if (index < 0 || index >= _boardLevelData.TileCount || _pieces[index] == null)
             {
-                BlastPieces().Forget();
                 return;
             }
 
-            ReverseLastMove();
+            _pieces[index].ToggleSelect(state);
         }
-        
-        private void ReverseLastMove()
+
+        public async UniTask ProcessMove(int firstPieceIndex, int secondPieceIndex)
         {
+            if (_isPieceMoving)
+            {
+                return;
+            }
+
+            _isPieceMoving = true;
+
+            await SwapPieces(firstPieceIndex, secondPieceIndex);
+            CheckMatches();
+            if (!IsMatch())
+            {
+                await SwapPieces(firstPieceIndex, secondPieceIndex);
+                _isPieceMoving = false;
+                return;
+            }
+
+            await ProcessBlast();
+
+            CheckMatches();
+            while (IsMatch())
+            {
+                await ProcessBlast();
+                CheckMatches();
+            }
+
+            _isPieceMoving = false;
         }
         
+        private async UniTask SwapPieces(int firstPieceIndex, int secondPieceIndex)
+        {
+            (_pieces[firstPieceIndex], _pieces[secondPieceIndex]) =
+                (_pieces[secondPieceIndex], _pieces[firstPieceIndex]);
+            
+            _swapPiecesTasks.Add(_pieces[firstPieceIndex]
+                .MoveToPosition(_boardEntity.GetTilePosition(firstPieceIndex)));
+            _swapPiecesTasks.Add(_pieces[secondPieceIndex]
+                .MoveToPosition(_boardEntity.GetTilePosition(secondPieceIndex)));
+
+            await UniTask.WhenAll(_swapPiecesTasks);
+            _swapPiecesTasks.Clear();
+        }
+
+        private async UniTask ProcessBlast()
+        {
+            await BlastPieces();
+            SetNewIndices();
+            GenerateNewPieces();
+            await MovePiecesToNewPositions();
+        }
+
         private void ShufflePieces()
         {
             ResetArrays();
@@ -103,7 +156,7 @@ namespace Game.Scripts.GamePlay
                 Board = _piecesData,
                 Seed = Random.Range(1, RandomSeed)
             };
-            
+
             JobHandle jobHandle = matchJob.Schedule();
             jobHandle.Complete();
 
@@ -129,7 +182,7 @@ namespace Game.Scripts.GamePlay
             JobHandle jobHandle = matchJob.Schedule();
             jobHandle.Complete();
         }
-        
+
         private void ResetArrays()
         {
             for (int i = 0; i < _boardLevelData.TileCount; i++)
@@ -137,6 +190,11 @@ namespace Game.Scripts.GamePlay
                 _piecesData[i] = _pieces[i].PieceType;
                 _matchBoardData[i] = false;
                 _newBoardIndices[i] = i;
+            }
+
+            for (int i = 0; i < _boardLevelData.Width; i++)
+            {
+                _columnBlastAmount[i] = 0;
             }
         }
 
@@ -159,7 +217,8 @@ namespace Game.Scripts.GamePlay
             {
                 if (_matchBoardData[i])
                 {
-                    _blastPieceTasks.Add(BlastPiece(_pieces[i]));
+                    _columnBlastAmount[i % _boardLevelData.Width]++;
+                    _blastPieceTasks.Add(BlastPiece(i));
                 }
             }
 
@@ -167,17 +226,67 @@ namespace Game.Scripts.GamePlay
             _blastPieceTasks.Clear();
         }
 
-        private async UniTask BlastPiece(PieceEntity piece)
+        private async UniTask BlastPiece(int index)
         {
-            await piece.Blast();
-            _pieceSpawner.ReleasePiece(piece);
+            await _pieces[index].Blast();
+            _pieceSpawner.ReleasePiece(_pieces[index]);
+            _pieces[index] = null;
         }
 
-        private void OnDestroy()
+        private void SetNewIndices()
+        {
+            for (int i = 0; i < _boardLevelData.TileCount; i++)
+            {
+                int newIndex = _newBoardIndices[i];
+                if (newIndex == i || _pieces[i] != null)
+                {
+                    continue;
+                }
+
+                _pieces[i] = _pieces[newIndex];
+                _pieces[newIndex] = null;
+            }
+        }
+
+        private void GenerateNewPieces()
+        {
+            for (int i = _boardLevelData.TileCount - 1; i >= 0; i--)
+            {
+                if (_pieces[i] != null)
+                {
+                    continue;
+                }
+
+                var piece = _pieceSpawner.GetRandomPiece();
+                int columnIndex = i % _boardLevelData.Width;
+                piece.SetToPosition(
+                    _boardEntity.GetTilePosition(i + _boardLevelData.Width * _columnBlastAmount[columnIndex]));
+                _columnBlastAmount[columnIndex] -= 1;
+                _pieces[i] = piece;
+            }
+        }
+
+        private async UniTask MovePiecesToNewPositions()
+        {
+            for (int i = 0; i < _boardLevelData.TileCount; i++)
+            {
+                _movePiecesTasks.Add(_pieces[i].MoveToPosition(_boardEntity.GetTilePosition(i)));
+            }
+
+            await UniTask.WhenAll(_movePiecesTasks);
+            _movePiecesTasks.Clear();
+        }
+
+        private void DisposeArrays()
         {
             _piecesData.Dispose();
             _matchBoardData.Dispose();
             _newBoardIndices.Dispose();
+        }
+
+        private void OnDestroy()
+        {
+            DisposeArrays();
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Game.Scripts.Piece
             return GetPiece((EPiece)randomIndex);
         }
 
-        public PieceEntity GetPiece(EPiece pieceType)
+        private PieceEntity GetPiece(EPiece pieceType)
         {
             var piece = Get();
             piece.SetPiece(pieceType);

@@ -12,8 +12,8 @@ namespace Game.Scripts
         public static void EndGame() => OnEndGame?.Invoke();
         public static event Action OnEndGame;
 
-        public static void SelectPiece(PieceEntity piece) => OnSelectPiece?.Invoke(piece);
-        public static event Action<PieceEntity> OnSelectPiece;
+        public static void SelectPiece(int pieceIndex) => OnSelectPiece?.Invoke(pieceIndex);
+        public static event Action<int> OnSelectPiece;
 
         public static void SetBoardLevelData(BoardLevelData boardLevelData) => OnSetBoardLevelData?.Invoke(boardLevelData);
         public static event Action<BoardLevelData> OnSetBoardLevelData;

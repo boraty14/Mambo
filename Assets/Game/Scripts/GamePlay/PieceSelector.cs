@@ -1,12 +1,13 @@
-﻿using Game.Scripts.Piece;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Game.Scripts.GamePlay
 {
     public class PieceSelector : MonoBehaviour
     {
-        private PieceEntity _lastSelectedPiece;
-        private PieceEntity _currentSelectedPiece;
+        [SerializeField] private MoveProcessor _moveProcessor;
+
+        private bool _isProcessingMove;
+        private int _currentSelectedPieceIndex = -1;
         
         private void OnEnable()
         {
@@ -18,15 +19,15 @@ namespace Game.Scripts.GamePlay
             EventBus.OnSelectPiece -= OnSelectPiece;
         }
 
-        private void OnSelectPiece(PieceEntity piece)
+        private void OnSelectPiece(int pieceIndex)
         {
-            if (_lastSelectedPiece != null)
+            if (_currentSelectedPieceIndex != -1)
             {
-                _lastSelectedPiece.ToggleSelect(false);
+                _moveProcessor.ToggleSelect(_currentSelectedPieceIndex,false);
             }
 
-            _currentSelectedPiece = piece;
-            _currentSelectedPiece.ToggleSelect(true);
+            _currentSelectedPieceIndex = pieceIndex;
+            _moveProcessor.ToggleSelect(_currentSelectedPieceIndex,true);
         }
         
         

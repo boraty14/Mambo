@@ -23,13 +23,12 @@ namespace Game.Scripts.Piece
         {
             PieceType = pieceType;
             _spriteRenderer.sprite = _pieceProperties[pieceType].Sprite;
-            _transform.localScale = _pieceSettings.NormalScale;
             ToggleSelect(false);
         }
 
         public void ToggleSelect(bool state)
         {
-            _transform.localScale = state ? _pieceSettings.NormalScale : _pieceSettings.SelectScale;
+            _transform.localScale = state ? _pieceSettings.SelectScale : _pieceSettings.NormalScale;
             var color = _spriteRenderer.color;
             color.a = state ? _pieceSettings.SelectAlpha : _pieceSettings.UnselectAlpha;
             _spriteRenderer.color = color;

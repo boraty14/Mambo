@@ -74,12 +74,20 @@ namespace Game.Scripts.Board
             return new Vector3(positionX, positionY, 0f);
         }
         
+        public int GetTileIndex(Vector3 position)
+        {
+            int widthIndex = Mathf.RoundToInt((position.x - _boardStartPosition.x) / _boardSettings.BoardLengthFactor);
+            int heightIndex = Mathf.RoundToInt((position.y - _boardStartPosition.y) / _boardSettings.BoardLengthFactor);
+            return heightIndex * _boardLevelData.Width + widthIndex;
+        }
+        
         public Vector3 GetTilePosition(int index)
         {
             int widthIndex = index % _boardLevelData.Width;
             int heightIndex = index / _boardLevelData.Width;
             return GetTilePosition(widthIndex,heightIndex);
         }
+
 
         private void ReleaseBoard()
         {

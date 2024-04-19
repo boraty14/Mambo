@@ -9,5 +9,6 @@ namespace Game.Scripts.Board
         [Range(1, 10)] public int Width;
         
         public int TileCount => Height * Width;
+        public int Time;
     }
 }
