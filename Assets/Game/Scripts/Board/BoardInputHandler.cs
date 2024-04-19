@@ -1,16 +1,17 @@
+using Cysharp.Threading.Tasks;
 using Game.Scripts.GamePlay;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Game.Scripts.Board
 {
-    public class BoardInputHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler, IPointerClickHandler
+    public class BoardInputHandler : MonoBehaviour, IPointerDownHandler, IDragHandler
     {
         [SerializeField] private BoardEntity _boardEntity;
         [SerializeField] private MoveProcessor _moveProcessor;
         [SerializeField] private Transform _boardParent;
 
-        private const int UnselectedIndex = -1;
+        public const int UnselectedIndex = -1;
         
         private Camera _camera;
         private int _selectedPieceIndex = UnselectedIndex;
@@ -20,19 +21,6 @@ namespace Game.Scripts.Board
         {
             _camera = Camera.main;
         }
-        
-        public void OnPointerClick(PointerEventData eventData)
-        {
-            if (_isProcessingMove)
-            {
-                return;
-            }
-
-            bool hasAlreadySelectedPiece = _selectedPieceIndex != UnselectedIndex;
-            var boardPosition = GetBoardPosition(eventData);
-            int tileIndex = _boardEntity.GetTileIndex(boardPosition);
-            EventBus.SelectPiece(tileIndex);
-        }
 
         public void OnPointerDown(PointerEventData eventData)
         {
@@ -40,24 +28,37 @@ namespace Game.Scripts.Board
             {
                 return;
             }
-            
+
+            int oldSelectedIndex = _selectedPieceIndex;
             var boardPosition = GetBoardPosition(eventData);
             int tileIndex = _boardEntity.GetTileIndex(boardPosition);
-            EventBus.SelectPiece(tileIndex);
-            Debug.Log(tileIndex);
-        }
+            _selectedPieceIndex = tileIndex;
 
-        public void OnPointerUp(PointerEventData eventData)
-        {
-            if (_isProcessingMove)
+            if (_selectedPieceIndex == oldSelectedIndex)
             {
+                _moveProcessor.ToggleSelect(oldSelectedIndex,false);
                 return;
             }
             
-            var boardPosition = GetBoardPosition(eventData);
-            int tileIndex = _boardEntity.GetTileIndex(boardPosition);
-            EventBus.SelectPiece(tileIndex);
+            if (_selectedPieceIndex == UnselectedIndex)
+            {
+                if (oldSelectedIndex == UnselectedIndex)
+                {
+                    return;
+                }
+                
+                _moveProcessor.ToggleSelect(oldSelectedIndex,false);
+                return;
+            }
+            
+            _moveProcessor.ToggleSelect(_selectedPieceIndex,true);
+
+            if (oldSelectedIndex != UnselectedIndex)
+            {
+                SwapSelectedPieces(oldSelectedIndex,_selectedPieceIndex).Forget();
+            }
         }
+        
 
         public void OnDrag(PointerEventData eventData)
         {
@@ -66,10 +67,22 @@ namespace Game.Scripts.Board
                 return;
             }
             
-            if (_selectedPieceIndex == -1)
+            var boardPosition = GetBoardPosition(eventData);
+            int tileIndex = _boardEntity.GetTileIndex(boardPosition);
+            if (tileIndex != UnselectedIndex && tileIndex != _selectedPieceIndex && _selectedPieceIndex != UnselectedIndex)
             {
-                return;
+                _moveProcessor.ToggleSelect(tileIndex,true);
+                SwapSelectedPieces(tileIndex,_selectedPieceIndex).Forget();
             }
+            
+        }
+
+        private async UniTaskVoid SwapSelectedPieces(int firstPieceIndex, int secondPieceIndex)
+        {
+            _isProcessingMove = true;
+            await _moveProcessor.ProcessMove(firstPieceIndex, secondPieceIndex);
+            _selectedPieceIndex = UnselectedIndex;
+            _isProcessingMove = false;
         }
 
         private Vector3 GetBoardPosition(PointerEventData eventData)

@@ -109,6 +109,8 @@ namespace Game.Scripts.GamePlay
             if (!IsMatch())
             {
                 await SwapPieces(firstPieceIndex, secondPieceIndex);
+                ToggleSelect(firstPieceIndex,false);
+                ToggleSelect(secondPieceIndex,false);
                 _isPieceMoving = false;
                 return;
             }
@@ -127,6 +129,7 @@ namespace Game.Scripts.GamePlay
         
         private async UniTask SwapPieces(int firstPieceIndex, int secondPieceIndex)
         {
+            Debug.Log($"{firstPieceIndex} {secondPieceIndex}");
             (_pieces[firstPieceIndex], _pieces[secondPieceIndex]) =
                 (_pieces[secondPieceIndex], _pieces[firstPieceIndex]);
             

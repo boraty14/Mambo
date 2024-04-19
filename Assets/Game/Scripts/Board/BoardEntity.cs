@@ -78,7 +78,8 @@ namespace Game.Scripts.Board
         {
             int widthIndex = Mathf.RoundToInt((position.x - _boardStartPosition.x) / _boardSettings.BoardLengthFactor);
             int heightIndex = Mathf.RoundToInt((position.y - _boardStartPosition.y) / _boardSettings.BoardLengthFactor);
-            return heightIndex * _boardLevelData.Width + widthIndex;
+            int index = heightIndex * _boardLevelData.Width + widthIndex;
+            return index >= _boardLevelData.TileCount || index < 0 ? BoardInputHandler.UnselectedIndex : index;
         }
         
         public Vector3 GetTilePosition(int index)
