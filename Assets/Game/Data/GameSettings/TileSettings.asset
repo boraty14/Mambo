@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MoveDuration: 0.2
   MoveEase: 2
+  BlastDuration: 0.2
+  BlastEase: 2
   PiecesProperties:
   - Type: 0
     Sprite: {fileID: 21300008, guid: 51e2a399831333b478ec978ee598bf0e, type: 3}

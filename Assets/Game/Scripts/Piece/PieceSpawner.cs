@@ -16,15 +16,15 @@ namespace Game.Scripts.Piece
             InitPool(_piecePrefab);
             foreach (var pieceProperties in _pieceSettings.PiecesProperties)
             {
-                _piecesProperties.TryAdd(pieceProperties.Type,pieceProperties);
+                _piecesProperties.TryAdd(pieceProperties.Type, pieceProperties);
             }
         }
-    
+
         public PieceEntity GetPiece(EPiece pieceType)
         {
-            var tile = Get();
-            tile.SetTile(pieceType, _piecesProperties[pieceType].Sprite);
-            return tile;
+            var piece = Get();
+            piece.SetPiece(pieceType, _piecesProperties[pieceType].Sprite);
+            return piece;
         }
 
         public void ReleasePiece(PieceEntity tile)

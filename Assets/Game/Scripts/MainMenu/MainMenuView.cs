@@ -9,12 +9,12 @@ namespace Game.Scripts.MainMenu
 
         private void OnEnable()
         {
-            SignalBus.StartGame += OnStartGame;
+            EventBus.OnStartGame += OnStartGame;
         }
 
         private void OnDisable()
         {
-            SignalBus.StartGame -= OnStartGame;
+            EventBus.OnStartGame -= OnStartGame;
         }
 
         private void OnStartGame()

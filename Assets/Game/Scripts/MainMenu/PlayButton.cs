@@ -25,7 +25,7 @@ namespace Game.Scripts.MainMenu
 
         private void OnPlayClick()
         {
-            SignalBus.StartGame?.Invoke();
+            EventBus.StartGame();
         }
     }
 }

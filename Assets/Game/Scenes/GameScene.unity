@@ -350,7 +350,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 4.5, y: 5.5}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -750,7 +750,6 @@ GameObject:
   m_Component:
   - component: {fileID: 892982264}
   - component: {fileID: 892982262}
-  - component: {fileID: 892982261}
   m_Layer: 0
   m_Name: Board
   m_TagString: Untagged
@@ -758,22 +757,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &892982261
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 892982260}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29597b515503dd2418f9b4afd76d71cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _boardSettings: {fileID: 11400000, guid: 6b63e0af3243c294b95979d15f3a3748, type: 2}
-  _tileBackgroundSpawner: {fileID: 2069451678}
-  _backgroundSprite: {fileID: 230256868}
-  _boardCollider: {fileID: 1212471697}
 --- !u!114 &892982262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1713,8 +1696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f78be63e0ff742adbec2ad5dc4b226b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tileBackgroundPrefab: {fileID: 6234249939716889581, guid: 1d801eade84456f4f8eb53a52b62116a,
-    type: 3}
+  _tilePrefab: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

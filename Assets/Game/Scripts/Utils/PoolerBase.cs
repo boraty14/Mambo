@@ -37,8 +37,8 @@ namespace Game.Scripts.Utils
         #endregion
 
         #region Getters
-        public T Get() => Pool.Get();
-        public void Release(T obj) => Pool.Release(obj);
+        protected T Get() => Pool.Get();
+        protected void Release(T obj) => Pool.Release(obj);
         #endregion
     }
 }

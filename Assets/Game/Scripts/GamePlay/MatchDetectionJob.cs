@@ -4,19 +4,18 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace Game.Scripts.Board
+namespace Game.Scripts.GamePlay
 {
     [BurstCompile]
     public struct MatchDetectionJob : IJob
     {
         [ReadOnly]
-        public NativeArray<EPiece> Board; // The game board
-
-        public int BoardWidth; // Width of the game board
-        public int BoardHeight; // Height of the game board
+        public NativeArray<EPiece> Board;
+        public int BoardWidth;
+        public int BoardHeight;
 
         [WriteOnly]
-        public NativeList<int2> MatchPositions; // List to store the positions of matched tiles
+        public NativeArray<bool> MatchPositions;
 
         [BurstCompile]
         public void Execute()
@@ -39,7 +38,8 @@ namespace Game.Scripts.Board
                     {
                         for (int i = 0; i < horizontalCount; i++)
                         {
-                            MatchPositions.Add(new int2(x - i, y));
+                            MatchPositions[y * BoardWidth + (x + i)] = true;
+                            //MatchPositions.Add(new int2(x - i, y));
                         }
                     }
 
@@ -47,7 +47,8 @@ namespace Game.Scripts.Board
                     {
                         for (int i = 0; i < verticalCount; i++)
                         {
-                            MatchPositions.Add(new int2(x, y - i));
+                            MatchPositions[(y + i) * BoardWidth + x] = true;
+                            //MatchPositions.Add(new int2(x, y - i));
                         }
                     }
                 }

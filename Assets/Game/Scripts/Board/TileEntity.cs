@@ -2,10 +2,10 @@
 
 namespace Game.Scripts.Board
 {
-    public class TileBackgroundEntity : MonoBehaviour
+    public class TileEntity : MonoBehaviour
     {
         [SerializeField] private Transform _transform;
-
+        
         public void SetTransform(Vector3 position, Vector3 scale)
         {
             _transform.position = position;

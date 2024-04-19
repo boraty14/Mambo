@@ -9,6 +9,10 @@ namespace Game.Scripts.Piece
     {
         public float MoveDuration;
         public Ease MoveEase;
+        public float BlastDuration;
+        public Ease BlastEase;
+        [Range(0f, 1f)] public float SelectAlpha;
+        [Range(0f, 1f)] public float UnselectAlpha;
         public PieceProperties[] PiecesProperties;
     }
 

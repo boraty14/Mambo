@@ -1,0 +1,14 @@
+﻿UI
+
+how to communicate 
+ModelData? there is common data how to fetch it?
+
+ActLike System-MB => ReactiveSystem? Unitask-Signal-Unitask ... Loop
+
+
+board initialize
+piece fall
+piece generate
+piece initialize
+piece match
+piece shuffle
