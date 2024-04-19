@@ -9,6 +9,9 @@ using Unity.Mathematics;
 // then check for nulls and generate random for those
 // last, fall each pieces to its own index
 
+
+// check match one last time, if no match, shuffle (while repeat)
+
 namespace Game.Scripts.GamePlay
 {
     [BurstCompile]

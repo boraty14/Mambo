@@ -73,6 +73,13 @@ namespace Game.Scripts.Board
             var positionY = _boardStartPosition.y + (heightIndex * _boardSettings.BoardLengthFactor);
             return new Vector3(positionX, positionY, 0f);
         }
+        
+        public Vector3 GetTilePosition(int index)
+        {
+            int widthIndex = index % _boardLevelData.Width;
+            int heightIndex = index / _boardLevelData.Width;
+            return GetTilePosition(widthIndex,heightIndex);
+        }
 
         private void ReleaseBoard()
         {

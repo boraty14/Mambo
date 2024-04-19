@@ -10,6 +10,7 @@ namespace Game.Scripts.GamePlay
 {
     public class PieceMover : MonoBehaviour
     {
+        [SerializeField] private BoardEntity _boardEntity;
         [SerializeField] private PieceSpawner _pieceSpawner;
 
         private PieceEntity[] _pieces;
@@ -19,9 +20,10 @@ namespace Game.Scripts.GamePlay
         private NativeArray<bool> _matchBoardData;
         private NativeArray<int> _newBoardIndices;
 
+        private readonly List<UniTask> _blastPieceTasks = new();
+        
         private const int RandomSeed = 9999;
 
-        private readonly List<UniTask> _blastPieceTasks = new();
 
         private void OnEnable()
         {
@@ -69,6 +71,11 @@ namespace Game.Scripts.GamePlay
                 ShufflePieces();
                 CheckMatches();
             }
+            
+            for (int i = 0; i < _boardLevelData.TileCount; i++)
+            {
+                _pieces[i].SetToPosition(_boardEntity.GetTilePosition(i));
+            }
         }
 
         private void ProcessMove()
@@ -94,11 +101,16 @@ namespace Game.Scripts.GamePlay
             ShuffleJob matchJob = new ShuffleJob()
             {
                 Board = _piecesData,
-                Seed = Random.Range(0, RandomSeed)
+                Seed = Random.Range(1, RandomSeed)
             };
-
+            
             JobHandle jobHandle = matchJob.Schedule();
             jobHandle.Complete();
+
+            for (int i = 0; i < _boardLevelData.TileCount; i++)
+            {
+                _pieces[i].SetPiece(_piecesData[i]);
+            }
         }
 
         private void CheckMatches()

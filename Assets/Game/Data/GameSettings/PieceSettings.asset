@@ -10,12 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ca5f6de94bae114e88194e753a2f273, type: 3}
-  m_Name: TileSettings
+  m_Name: PieceSettings
   m_EditorClassIdentifier: 
   MoveDuration: 0.2
   MoveEase: 2
   BlastDuration: 0.2
   BlastEase: 2
+  SelectScale: {x: 0.8, y: 0.8, z: 0.8}
+  NormalScale: {x: 0.7, y: 0.7, z: 0.7}
+  BlastScale: {x: 0.2, y: 0.2, z: 0.2}
+  SelectAlpha: 0.5
+  UnselectAlpha: 1
   PiecesProperties:
   - Type: 0
     Sprite: {fileID: 21300008, guid: 51e2a399831333b478ec978ee598bf0e, type: 3}

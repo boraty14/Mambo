@@ -14,13 +14,20 @@ namespace Game.Scripts.Piece
 
         private void Awake()
         {
-            InitPool(_piecePrefab);
             foreach (var pieceProperties in _pieceSettings.PiecesProperties)
             {
                 _piecesProperties.TryAdd(pieceProperties.Type, pieceProperties);
             }
 
             _pieceTypeCount = _pieceSettings.PiecesProperties.Length;
+            InitPool(_piecePrefab);
+        }
+
+        protected override PieceEntity CreateSetup()
+        {
+            var piece = base.CreateSetup();
+            piece.Initialize(_piecesProperties);
+            return piece;
         }
 
         public PieceEntity GetRandomPiece()
@@ -32,7 +39,7 @@ namespace Game.Scripts.Piece
         public PieceEntity GetPiece(EPiece pieceType)
         {
             var piece = Get();
-            piece.SetPiece(pieceType, _piecesProperties[pieceType].Sprite);
+            piece.SetPiece(pieceType);
             return piece;
         }
 
