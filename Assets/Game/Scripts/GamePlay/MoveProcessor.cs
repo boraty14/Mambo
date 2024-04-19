@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Game.Scripts.Board;
 using Game.Scripts.Piece;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Game.Scripts.GamePlay
 {
@@ -147,6 +149,7 @@ namespace Game.Scripts.GamePlay
             await BlastPieces();
             SetNewIndices();
             GenerateNewPieces();
+            await UniTask.Delay(TimeSpan.FromSeconds(0.1f));
             await MovePiecesToNewPositions();
         }
 
@@ -220,7 +223,7 @@ namespace Game.Scripts.GamePlay
             {
                 if (_matchBoardData[i])
                 {
-                    _columnBlastAmount[i % _boardLevelData.Width]++;
+                    _columnBlastAmount[i % _boardLevelData.Width] += 1;
                     _blastPieceTasks.Add(BlastPiece(i));
                 }
             }
@@ -241,13 +244,15 @@ namespace Game.Scripts.GamePlay
             for (int i = 0; i < _boardLevelData.TileCount; i++)
             {
                 int newIndex = _newBoardIndices[i];
-                if (newIndex == i || _pieces[i] != null)
+                if (newIndex == i || _pieces[newIndex] != null)
                 {
                     continue;
                 }
-
+                
+                Debug.Log($"old {i} new {newIndex}");
+                PieceEntity temp = _pieces[i];
                 _pieces[i] = _pieces[newIndex];
-                _pieces[newIndex] = null;
+                _pieces[newIndex] = temp;
             }
         }
 
@@ -262,10 +267,14 @@ namespace Game.Scripts.GamePlay
 
                 var piece = _pieceSpawner.GetRandomPiece();
                 int columnIndex = i % _boardLevelData.Width;
-                piece.SetToPosition(
-                    _boardEntity.GetTilePosition(i + _boardLevelData.Width * _columnBlastAmount[columnIndex]));
-                _columnBlastAmount[columnIndex] -= 1;
+
+                int spawnIndex = columnIndex + _boardLevelData.TileCount +
+                                 (_boardLevelData.Width * (_columnBlastAmount[columnIndex] - 1));
+                
+                piece.SetToPosition(_boardEntity.GetTilePosition(spawnIndex));
                 _pieces[i] = piece;
+                _pieces[i].name = spawnIndex.ToString();
+                _columnBlastAmount[columnIndex] -= 1;
             }
         }
 
@@ -273,6 +282,10 @@ namespace Game.Scripts.GamePlay
         {
             for (int i = 0; i < _boardLevelData.TileCount; i++)
             {
+                if (_newBoardIndices[i] == i)
+                {
+                    continue;
+                }
                 _movePiecesTasks.Add(_pieces[i].MoveToPosition(_boardEntity.GetTilePosition(i)));
             }
 

@@ -37,6 +37,7 @@ namespace Game.Scripts.Board
             if (_selectedPieceIndex == oldSelectedIndex)
             {
                 _moveProcessor.ToggleSelect(oldSelectedIndex,false);
+                _selectedPieceIndex = UnselectedIndex;
                 return;
             }
             

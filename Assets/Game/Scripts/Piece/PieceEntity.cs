@@ -48,7 +48,7 @@ namespace Game.Scripts.Piece
 
         public async UniTask MoveToPosition(Vector3 target)
         {
-            var distance = Vector3.Distance(_transform.position, target);
+            var distance = Vector3.Distance(_transform.localPosition, target);
             await Tween.LocalPosition(_transform, target, _pieceSettings.MoveDuration * distance,
                 _pieceSettings.MoveEase);
         }

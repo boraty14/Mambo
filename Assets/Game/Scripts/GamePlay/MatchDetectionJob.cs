@@ -69,11 +69,10 @@ namespace Game.Scripts.GamePlay
         {
             MatchBoard[index] = true;
             int tileCount = NewBoardIndices.Length;
-
             index += BoardWidth;
             while (index < tileCount)
             {
-                NewBoardIndices[index - BoardWidth] = index;
+                NewBoardIndices[index] = index-BoardWidth;
                 index += BoardWidth;
             }
         }
