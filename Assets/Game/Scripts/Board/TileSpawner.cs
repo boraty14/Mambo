@@ -12,13 +12,13 @@ namespace Game.Scripts.Board
             InitPool(_tilePrefab);
         }
         
-        public TileEntity GetTileBackground()
+        public TileEntity GetTile()
         {
             var tileBackground = Get();
             return tileBackground;
         }
 
-        public void ReleaseTileBackground(TileEntity tileBackground)
+        public void ReleaseTile(TileEntity tileBackground)
         {
             Release(tileBackground);
         }

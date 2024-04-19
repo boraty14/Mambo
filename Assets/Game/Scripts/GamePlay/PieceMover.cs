@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Game.Scripts.Board;
 using Game.Scripts.Piece;
@@ -12,10 +11,15 @@ namespace Game.Scripts.GamePlay
     public class PieceMover : MonoBehaviour
     {
         [SerializeField] private PieceSpawner _pieceSpawner;
-        private NativeArray<EPiece> _piecesData;
-        private NativeArray<bool> _matchPositions;
+
         private PieceEntity[] _pieces;
         private BoardLevelData _boardLevelData;
+
+        private NativeArray<EPiece> _piecesData;
+        private NativeArray<bool> _matchBoardData;
+        private NativeArray<int> _newBoardIndices;
+
+        private const int RandomSeed = 9999;
 
         private readonly List<UniTask> _blastPieceTasks = new();
 
@@ -35,10 +39,12 @@ namespace Game.Scripts.GamePlay
         {
             _boardLevelData = boardLevelData;
             _piecesData = new NativeArray<EPiece>(_boardLevelData.TileCount, Allocator.Persistent);
-            _matchPositions = new NativeArray<bool>(_boardLevelData.TileCount, Allocator.Persistent);
+            _matchBoardData = new NativeArray<bool>(_boardLevelData.TileCount, Allocator.Persistent);
+            _newBoardIndices = new NativeArray<int>(_boardLevelData.TileCount, Allocator.Persistent);
             _pieces = new PieceEntity[_boardLevelData.TileCount];
+            InitializePieces();
         }
-        
+
         private void OnEndGame()
         {
             foreach (var piece in _pieces)
@@ -49,47 +55,99 @@ namespace Game.Scripts.GamePlay
                 }
             }
         }
-        
-        private void DetectMatches()
+
+        private void InitializePieces()
         {
             for (int i = 0; i < _boardLevelData.TileCount; i++)
             {
-                _matchPositions[i] = false;
-                _piecesData[i] = _pieces[i].PieceType;
+                _pieces[i] = _pieceSpawner.GetRandomPiece();
             }
+
+            CheckMatches();
+            while (IsMatch())
+            {
+                ShufflePieces();
+                CheckMatches();
+            }
+        }
+
+        private void ProcessMove()
+        {
+            CheckMatches();
+            if (IsMatch())
+            {
+                BlastPieces().Forget();
+                return;
+            }
+
+            ReverseLastMove();
+        }
+        
+        private void ReverseLastMove()
+        {
+        }
+        
+        private void ShufflePieces()
+        {
+            ResetArrays();
+
+            ShuffleJob matchJob = new ShuffleJob()
+            {
+                Board = _piecesData,
+                Seed = Random.Range(0, RandomSeed)
+            };
+
+            JobHandle jobHandle = matchJob.Schedule();
+            jobHandle.Complete();
+        }
+
+        private void CheckMatches()
+        {
+            ResetArrays();
 
             MatchDetectionJob matchJob = new MatchDetectionJob
             {
                 Board = _piecesData,
+                MatchBoard = _matchBoardData,
+                NewBoardIndices = _newBoardIndices,
                 BoardWidth = _boardLevelData.Width,
                 BoardHeight = _boardLevelData.Height,
-                MatchPositions = _matchPositions
             };
 
             JobHandle jobHandle = matchJob.Schedule();
-
             jobHandle.Complete();
-
-            // check if there is a match
+        }
+        
+        private void ResetArrays()
+        {
             for (int i = 0; i < _boardLevelData.TileCount; i++)
             {
-                if (_matchPositions[i] == true)
+                _piecesData[i] = _pieces[i].PieceType;
+                _matchBoardData[i] = false;
+                _newBoardIndices[i] = i;
+            }
+        }
+
+        private bool IsMatch()
+        {
+            for (int i = 0; i < _boardLevelData.TileCount; i++)
+            {
+                if (_matchBoardData[i])
                 {
-                    BlastPieces().Forget();
-                    return;
+                    return true;
                 }
             }
-            
-            ReverseLastMove();
+
+            return false;
         }
 
         private async UniTask BlastPieces()
         {
             for (int i = 0; i < _boardLevelData.TileCount; i++)
             {
-                if (_matchPositions[i] == true)
+                if (_matchBoardData[i])
                 {
-                    _blastPieceTasks.Add(BlastPiece(_pieces[i]));                    
+                    _blastPieceTasks.Add(BlastPiece(_pieces[i]));
                 }
             }
 
@@ -103,15 +161,11 @@ namespace Game.Scripts.GamePlay
             _pieceSpawner.ReleasePiece(piece);
         }
 
-        private void ReverseLastMove()
-        {
-            
-        }
-
         private void OnDestroy()
         {
             _piecesData.Dispose();
-            _matchPositions.Dispose();
+            _matchBoardData.Dispose();
+            _newBoardIndices.Dispose();
         }
     }
 }

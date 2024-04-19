@@ -2,7 +2,7 @@ namespace Game.Scripts.Piece
 {
     public enum EPiece
     {
-        Blue,
+        Blue = 0,
         Green,
         Orange,
         Red,

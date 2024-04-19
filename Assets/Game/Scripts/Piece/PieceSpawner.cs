@@ -10,6 +10,7 @@ namespace Game.Scripts.Piece
         [SerializeField] private PieceSettings _pieceSettings;
 
         private readonly Dictionary<EPiece, PieceProperties> _piecesProperties = new();
+        private int _pieceTypeCount;
 
         private void Awake()
         {
@@ -18,6 +19,14 @@ namespace Game.Scripts.Piece
             {
                 _piecesProperties.TryAdd(pieceProperties.Type, pieceProperties);
             }
+
+            _pieceTypeCount = _pieceSettings.PiecesProperties.Length;
+        }
+
+        public PieceEntity GetRandomPiece()
+        {
+            int randomIndex = Random.Range(0, _pieceTypeCount);
+            return GetPiece((EPiece)randomIndex);
         }
 
         public PieceEntity GetPiece(EPiece pieceType)

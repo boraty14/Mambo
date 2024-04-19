@@ -5,7 +5,7 @@ namespace Game.Scripts.Board
     public class BoardEntity : MonoBehaviour
     {
         [SerializeField] private BoardSettings _boardSettings;
-        [SerializeField] private TileSpawner _tileBackgroundSpawner;
+        [SerializeField] private TileSpawner _tileSpawner;
         [SerializeField] private SpriteRenderer _backgroundSprite;
         [SerializeField] private BoxCollider2D _boardCollider;
         private TileEntity[] _tiles;
@@ -59,7 +59,7 @@ namespace Game.Scripts.Board
                 
             for (int i = 0; i < _boardLevelData.TileCount; i++)
             {
-                var tileBackground =  _tileBackgroundSpawner.GetTileBackground();
+                var tileBackground =  _tileSpawner.GetTile();
                 var widthIndex = i % _boardLevelData.Width;
                 var heightIndex = i / _boardLevelData.Width;
                 tileBackground.SetTransform(GetTilePosition(widthIndex,heightIndex), scale);
@@ -81,7 +81,7 @@ namespace Game.Scripts.Board
             
             foreach (var tile in _tiles)
             {
-                _tileBackgroundSpawner.ReleaseTileBackground(tile);
+                _tileSpawner.ReleaseTile(tile);
             }
         }
     }

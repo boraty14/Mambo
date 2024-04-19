@@ -4,18 +4,22 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
+// first blast
+// then copy board to pieces array (CHECK if null)
+// then check for nulls and generate random for those
+// last, fall each pieces to its own index
+
 namespace Game.Scripts.GamePlay
 {
     [BurstCompile]
     public struct MatchDetectionJob : IJob
     {
-        [ReadOnly]
-        public NativeArray<EPiece> Board;
-        public int BoardWidth;
-        public int BoardHeight;
-
-        [WriteOnly]
-        public NativeArray<bool> MatchPositions;
+        [ReadOnly] public NativeArray<EPiece> Board;
+        [WriteOnly] public NativeArray<bool> MatchBoard;
+        [WriteOnly] public NativeArray<int> NewBoardIndices;
+        
+        [ReadOnly] public int BoardWidth;
+        [ReadOnly] public int BoardHeight;
 
         [BurstCompile]
         public void Execute()
@@ -38,7 +42,8 @@ namespace Game.Scripts.GamePlay
                     {
                         for (int i = 0; i < horizontalCount; i++)
                         {
-                            MatchPositions[y * BoardWidth + (x + i)] = true;
+                            int matchIndex = y * BoardWidth + (x + i);
+                            SetNewIndicesAfterBlast(matchIndex);
                             //MatchPositions.Add(new int2(x - i, y));
                         }
                     }
@@ -47,11 +52,26 @@ namespace Game.Scripts.GamePlay
                     {
                         for (int i = 0; i < verticalCount; i++)
                         {
-                            MatchPositions[(y + i) * BoardWidth + x] = true;
+                            int matchIndex = (y + i) * BoardWidth + x;
+                            SetNewIndicesAfterBlast(matchIndex);
                             //MatchPositions.Add(new int2(x, y - i));
                         }
                     }
                 }
+            }
+        }
+
+        [BurstCompile]
+        private void SetNewIndicesAfterBlast(int index)
+        {
+            MatchBoard[index] = true;
+            int tileCount = NewBoardIndices.Length;
+
+            index += BoardWidth;
+            while (index < tileCount)
+            {
+                NewBoardIndices[index - BoardWidth] = index;
+                index += BoardWidth;
             }
         }
 
