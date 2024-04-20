@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using Game.Scripts.GamePlay;
 using UnityEngine;
@@ -12,10 +13,25 @@ namespace Game.Scripts.Board
         [SerializeField] private Transform _boardParent;
 
         public const int UnselectedIndex = -1;
-        
+
         private Camera _camera;
         private int _selectedPieceIndex = UnselectedIndex;
         private bool _isProcessingMove;
+
+        private void OnEnable()
+        {
+            EventBus.OnTimeIsUp += OnTimeIsUp;
+        }
+
+        private void OnDisable()
+        {
+            EventBus.OnTimeIsUp -= OnTimeIsUp;
+        }
+
+        private void OnTimeIsUp()
+        {
+            _selectedPieceIndex = UnselectedIndex;
+        }
 
         private void Start()
         {
@@ -36,30 +52,30 @@ namespace Game.Scripts.Board
 
             if (_selectedPieceIndex == oldSelectedIndex)
             {
-                _moveProcessor.ToggleSelect(oldSelectedIndex,false);
+                _moveProcessor.ToggleSelect(oldSelectedIndex, false);
                 _selectedPieceIndex = UnselectedIndex;
                 return;
             }
-            
+
             if (_selectedPieceIndex == UnselectedIndex)
             {
                 if (oldSelectedIndex == UnselectedIndex)
                 {
                     return;
                 }
-                
-                _moveProcessor.ToggleSelect(oldSelectedIndex,false);
+
+                _moveProcessor.ToggleSelect(oldSelectedIndex, false);
                 return;
             }
-            
-            _moveProcessor.ToggleSelect(_selectedPieceIndex,true);
+
+            _moveProcessor.ToggleSelect(_selectedPieceIndex, true);
 
             if (oldSelectedIndex != UnselectedIndex)
             {
-                SwapSelectedPieces(oldSelectedIndex,_selectedPieceIndex).Forget();
+                SwapSelectedPieces(oldSelectedIndex, _selectedPieceIndex).Forget();
             }
         }
-        
+
 
         public void OnDrag(PointerEventData eventData)
         {
@@ -67,15 +83,15 @@ namespace Game.Scripts.Board
             {
                 return;
             }
-            
+
             var boardPosition = GetBoardPosition(eventData);
             int tileIndex = _boardEntity.GetTileIndex(boardPosition);
-            if (tileIndex != UnselectedIndex && tileIndex != _selectedPieceIndex && _selectedPieceIndex != UnselectedIndex)
+            if (tileIndex != UnselectedIndex && tileIndex != _selectedPieceIndex &&
+                _selectedPieceIndex != UnselectedIndex)
             {
-                _moveProcessor.ToggleSelect(tileIndex,true);
-                SwapSelectedPieces(tileIndex,_selectedPieceIndex).Forget();
+                _moveProcessor.ToggleSelect(tileIndex, true);
+                SwapSelectedPieces(tileIndex, _selectedPieceIndex).Forget();
             }
-            
         }
 
         private async UniTaskVoid SwapSelectedPieces(int firstPieceIndex, int secondPieceIndex)

@@ -59,6 +59,11 @@ namespace Game.Scripts.Piece
                 _pieceSettings.MoveEase);
         }
 
+        public void KillTweens()
+        {
+            Tween.StopAll(_transform);
+        }
+
         public Vector3 GetPosition()
         {
             return _transform.position;

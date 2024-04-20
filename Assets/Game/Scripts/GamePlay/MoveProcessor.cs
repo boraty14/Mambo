@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Game.Scripts.Board;
 using Game.Scripts.Piece;
@@ -27,6 +26,7 @@ namespace Game.Scripts.GamePlay
         private readonly List<UniTask> _swapPiecesTasks = new();
         private const int RandomSeed = 9999;
 
+        private bool _isTimeUp;
 
         private void OnEnable()
         {
@@ -43,6 +43,7 @@ namespace Game.Scripts.GamePlay
         private void OnSetBoardLevelData(BoardLevelData boardLevelData)
         {
             _boardLevelData = boardLevelData;
+            _isTimeUp = false;
 
             DisposeArrays();
             _piecesData = new NativeArray<EPiece>(_boardLevelData.TileCount, Allocator.Persistent);
@@ -54,10 +55,13 @@ namespace Game.Scripts.GamePlay
 
         private void OnTimeIsUp()
         {
+            _isTimeUp = true;
+            
             foreach (var piece in _pieces)
             {
                 if (piece != null)
                 {
+                    piece.KillTweens();
                     _pieceSpawner.ReleasePiece(piece);
                 }
             }
@@ -96,12 +100,17 @@ namespace Game.Scripts.GamePlay
         public async UniTask ProcessMove(int firstPieceIndex, int secondPieceIndex)
         {
             await SwapPieces(firstPieceIndex, secondPieceIndex);
+            if (_isTimeUp)
+            {
+                return;
+            }
+            
+            ToggleSelect(firstPieceIndex,false);
+            ToggleSelect(secondPieceIndex,false);
             CheckMatches();
             if (!IsMatch())
             {
                 await SwapPieces(firstPieceIndex, secondPieceIndex);
-                ToggleSelect(firstPieceIndex,false);
-                ToggleSelect(secondPieceIndex,false);
                 return;
             }
 
@@ -110,6 +119,10 @@ namespace Game.Scripts.GamePlay
             CheckMatches();
             while (IsMatch())
             {
+                if (_isTimeUp)
+                {
+                    return;
+                }
                 await ProcessBlast();
                 CheckMatches();
             }
@@ -131,10 +144,19 @@ namespace Game.Scripts.GamePlay
 
         private async UniTask ProcessBlast()
         {
+            if (_isTimeUp)
+            {
+                return;
+            }
             await BlastPieces();
+            
             SetNewIndices();
             GenerateNewPieces();
-            await UniTask.Delay(TimeSpan.FromSeconds(0.1f));
+            
+            if (_isTimeUp)
+            {
+                return;
+            }
             await MovePiecesToNewPositions();
         }
 
@@ -214,6 +236,10 @@ namespace Game.Scripts.GamePlay
             var piece = _pieces[index];
             _blastEffectSpawner.PlayBlastEffect(piece).Forget();
             await piece.Blast();
+            if (_isTimeUp)
+            {
+                return;
+            }
             _pieceSpawner.ReleasePiece(piece);
             _pieces[index] = null;
         }

@@ -28,9 +28,9 @@ namespace Game.Scripts.GamePlay
                 Score = _currentScore
             };
             
-            if (_currentScore <= highScore)
+            if (isHighScore)
             {
-                PlayerSave.SetHighScore(highScore);
+                PlayerSave.SetHighScore(_currentScore);
             }
             
             _currentScore = 0;

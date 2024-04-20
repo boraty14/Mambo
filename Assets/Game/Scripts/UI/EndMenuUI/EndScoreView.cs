@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using Game.Scripts.GamePlay;
+using TMPro;
 using UnityEngine;
 
 namespace Game.Scripts.UI.EndMenuUI
@@ -8,14 +9,10 @@ namespace Game.Scripts.UI.EndMenuUI
         [SerializeField] private GameObject _highScoreText;
         [SerializeField] private TMP_Text _scoreText;
 
-        public void ToggleHighScoreText(bool state)
+        public void SetGameData(GameData gameData)
         {
-            _highScoreText.SetActive(state);
-        }
-
-        public void SetHighScore(int score)
-        {
-            _scoreText.text = score.ToString();
+            _highScoreText.SetActive(gameData.IsHighScore);
+            _scoreText.text = $"SCORE: {gameData.Score}";
         }
     }
 }

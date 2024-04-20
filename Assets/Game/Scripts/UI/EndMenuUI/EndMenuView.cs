@@ -27,6 +27,7 @@ namespace Game.Scripts.UI.EndMenuUI
         private void OnEndGame(GameData gameData)
         {
             ToggleView(true);
+            _endScoreView.SetGameData(gameData);
         }
     }
 }
