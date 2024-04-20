@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab619b3ad915480db42ab5de595dbfac, type: 3}
   m_Name: BoardLevel1
   m_EditorClassIdentifier: 
-  Height: 11
-  Width: 9
+  Height: 7
+  Width: 5
   Duration: 30

@@ -7,7 +7,6 @@ namespace Game.Scripts.Board
     {
         public float BoardLengthFactor;
         public float BoardEdgeOffset;
-        [Range(0f, 1f)] public float TileInteractionPercentage;
         [Range(0f, 1f)] public float TileSize;
 
     }

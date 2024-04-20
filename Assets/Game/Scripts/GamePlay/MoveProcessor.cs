@@ -124,6 +124,7 @@ namespace Game.Scripts.GamePlay
             if (!IsMatch())
             {
                 await SwapPieces(firstPieceIndex, secondPieceIndex);
+                IsProcessingMove = false;
                 return;
             }
 
