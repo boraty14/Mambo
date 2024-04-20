@@ -23,10 +23,11 @@ namespace Game.Scripts.GamePlay
             var widthSize = boardLevelData.Width;
             var heightSize = boardLevelData.Height * _gameCamera.aspect;
 
-            var aspect = widthSize > heightSize ? _gameCamera.aspect : 1f;
+            var isWidthLonger = widthSize > heightSize;
+            var aspect = isWidthLonger ? _gameCamera.aspect : 1f;
+            var length = isWidthLonger ? boardLevelData.Width : boardLevelData.Height;
             
-            var originalSize = (_boardSettings.BoardLengthFactor * boardLevelData.Width) /
-                               (2f * aspect);
+            var originalSize = (_boardSettings.BoardLengthFactor * length) / (2f * aspect);
 
             var offsetSize = (1f + _boardSettings.BoardEdgeOffset) * originalSize;
 
