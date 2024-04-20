@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game.Scripts.MainMenu
+namespace Game.Scripts.UI.MainMenuUI
 {
     public class PlayButton : MonoBehaviour
     {

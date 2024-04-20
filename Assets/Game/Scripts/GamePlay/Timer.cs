@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Game.Scripts.Board;
 using UnityEngine;
 
-namespace Game.Scripts.Timer
+namespace Game.Scripts.GamePlay
 {
     public class Timer : MonoBehaviour
     {
@@ -15,18 +16,24 @@ namespace Game.Scripts.Timer
         private TimeSpan _currentRemainingTime;
         private int _previousRemainingSeconds;
 
-        public void StartTimer(int duration)
+        private void OnEnable()
         {
+            EventBus.OnSetBoardLevelData += OnSetBoardLevelData;
+        }
+
+        private void OnDisable()
+        {
+            EventBus.OnSetBoardLevelData -= OnSetBoardLevelData;
+        }
+
+        private void OnSetBoardLevelData(BoardLevelData boardLevelData)
+        {
+            int duration = boardLevelData.Duration;
             _cts?.Dispose();
             _cts = new CancellationTokenSource();
             _targetTime = DateTime.Now.AddSeconds(duration);
             _previousRemainingSeconds = duration;
             TickTimer().Forget();
-        }
-
-        public void CancelTimer()
-        {
-            _cts?.Cancel();
         }
 
         private async UniTask TickTimer()
@@ -44,7 +51,7 @@ namespace Game.Scripts.Timer
                 var currentRemainingTotalSeconds = Mathf.RoundToInt((float)_currentRemainingTime.TotalSeconds);
                 if (_previousRemainingSeconds == currentRemainingTotalSeconds)
                 {
-                    return;
+                    continue;
                 }
 
                 _previousRemainingSeconds = currentRemainingTotalSeconds;

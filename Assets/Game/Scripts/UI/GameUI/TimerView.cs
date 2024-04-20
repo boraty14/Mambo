@@ -1,12 +1,12 @@
-﻿using TMPro;
+﻿using Game.Scripts.GamePlay;
+using TMPro;
 using UnityEngine;
 
-namespace Game.Scripts.Timer
+namespace Game.Scripts.UI.GameUI
 {
     public class TimerView : MonoBehaviour
     {
         [SerializeField] private TMP_Text _timeText;
-        [SerializeField] private GameObject _gameObject;
         [SerializeField] private Timer _timer;
 
         private void OnEnable()
@@ -19,11 +19,6 @@ namespace Game.Scripts.Timer
         {
             _timer.OnTimerUpdate -= OnTimerUpdate;
             _timer.OnTimeIsUp -= OnTimeIsUp;
-        }
-
-        public void Toggle(bool state)
-        {
-            _gameObject.SetActive(state);
         }
 
         private void OnTimerUpdate(int duration)

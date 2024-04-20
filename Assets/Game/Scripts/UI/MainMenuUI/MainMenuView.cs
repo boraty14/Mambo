@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Game.Scripts.MainMenu
+namespace Game.Scripts.UI.MainMenuUI
 {
     public class MainMenuView : MonoBehaviour
     {

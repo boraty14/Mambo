@@ -13,5 +13,12 @@ namespace Game.Scripts
 
         public static void SetBoardLevelData(BoardLevelData boardLevelData) => OnSetBoardLevelData?.Invoke(boardLevelData);
         public static event Action<BoardLevelData> OnSetBoardLevelData;
+
+        public static void ReturnMainMenu() => OnReturnMainMenu?.Invoke();
+        public static event Action OnReturnMainMenu;
+
+        public static void Blast(int score) => OnBlast?.Invoke(score);
+        public static event Action<int> OnBlast;
+
     }
 }

@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
-namespace Game.Scripts.MainMenu
+namespace Game.Scripts.UI.MainMenuUI
 {
     public class HighScoreView : MonoBehaviour
     {
