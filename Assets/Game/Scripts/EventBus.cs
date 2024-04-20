@@ -1,6 +1,5 @@
 ﻿using System;
 using Game.Scripts.Board;
-using Game.Scripts.Piece;
 
 namespace Game.Scripts
 {

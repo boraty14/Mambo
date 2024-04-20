@@ -1,14 +1,9 @@
-﻿UI
+﻿COMPLETE UI WITH HIGH SCORE
 
-how to communicate 
-ModelData? there is common data how to fetch it?
+ADD FONTS/UI BUTTONS
 
-ActLike System-MB => ReactiveSystem? Unitask-Signal-Unitask ... Loop
+ADD TIMER
 
+ADD SCORE
 
-board initialize
-piece fall
-piece generate
-piece initialize
-piece match
-piece shuffle
+FIX UNSELECT AFTER MATCH
