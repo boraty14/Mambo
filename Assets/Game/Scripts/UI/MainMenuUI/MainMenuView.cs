@@ -1,26 +1,30 @@
-﻿using UnityEngine;
+﻿using System;
 
 namespace Game.Scripts.UI.MainMenuUI
 {
-    public class MainMenuView : MonoBehaviour
+    public class MainMenuView : ViewBase
     {
-        [SerializeField] private PlayButton _playButton;
-        [SerializeField] private HighScoreView _highScoreView;
-
         private void OnEnable()
         {
             EventBus.OnStartGame += OnStartGame;
+            EventBus.OnReturnMainMenu += OnReturnMainMenu;
+
         }
 
         private void OnDisable()
         {
             EventBus.OnStartGame -= OnStartGame;
+            EventBus.OnReturnMainMenu -= OnReturnMainMenu;
         }
 
         private void OnStartGame()
         {
-            _playButton.Toggle(false);
-            _highScoreView.Toggle(false);
+            ToggleView(false);
+        }
+
+        private void OnReturnMainMenu()
+        {
+            ToggleView(true);
         }
     }
 }

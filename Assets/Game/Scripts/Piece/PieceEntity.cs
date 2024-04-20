@@ -43,6 +43,7 @@ namespace Game.Scripts.Piece
 
         public async UniTask Blast()
         {
+            EventBus.Blast(_pieceSettings.PiecePoint);
             await Tween.Scale(_transform, _pieceSettings.BlastScale, _pieceSettings.BlastDuration,
                 _pieceSettings.BlastEase);
         }

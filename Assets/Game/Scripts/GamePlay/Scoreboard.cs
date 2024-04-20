@@ -1,39 +1,51 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Game.Scripts.GamePlay
 {
     public class Scoreboard : MonoBehaviour
     {
-        public event Action<int> OnScoreUpdate;
         private int _currentScore;
         
         private void OnEnable()
         {
             EventBus.OnBlast += OnBlast;
+            EventBus.OnTimeIsUp += OnTimeIsUp;
         }
 
         private void OnDisable()
         {
             EventBus.OnBlast -= OnBlast;
-            ResetScore();
+            EventBus.OnTimeIsUp -= OnTimeIsUp;
+        }
+
+        private void OnTimeIsUp()
+        {
+            var highScore = PlayerSave.GetHighScore();
+            var isHighScore = _currentScore > highScore;
+            var gameData = new GameData()
+            {
+                IsHighScore = isHighScore,
+                Score = _currentScore
+            };
+            
+            if (_currentScore <= highScore)
+            {
+                PlayerSave.SetHighScore(highScore);
+            }
+            
+            _currentScore = 0;
+            EventBus.EndGame(gameData);
         }
 
         private void OnBlast(int score)
         {
             _currentScore += score;
-            OnScoreUpdate?.Invoke(_currentScore);
+            EventBus.UpdateScore(_currentScore);
         }
         
         public int GetScore()
         {
             return _currentScore;
-        }
-
-        private void ResetScore()
-        {
-            _currentScore = 0;
-            OnScoreUpdate?.Invoke(_currentScore);
         }
     }
 }

@@ -7,6 +7,7 @@ namespace Game.Scripts.Piece
     [CreateAssetMenu]
     public class PieceSettings : ScriptableObject
     {
+        public int PiecePoint;
         public float MoveDuration;
         public Ease MoveEase;
         public float BlastDuration;

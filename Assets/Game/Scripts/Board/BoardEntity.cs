@@ -15,13 +15,13 @@ namespace Game.Scripts.Board
         private void OnEnable()
         {
             EventBus.OnSetBoardLevelData += OnSetBoardLevelData;
-            EventBus.OnEndGame += OnEndGame;
+            EventBus.OnTimeIsUp += OnTimeIsUp;
         }
 
         private void OnDisable()
         {
             EventBus.OnSetBoardLevelData -= OnSetBoardLevelData;
-            EventBus.OnEndGame -= OnEndGame;
+            EventBus.OnTimeIsUp -= OnTimeIsUp;
         }
 
         private void OnSetBoardLevelData(BoardLevelData boardLevelData)
@@ -30,7 +30,7 @@ namespace Game.Scripts.Board
             GenerateBoard();
         }
 
-        private void OnEndGame()
+        private void OnTimeIsUp()
         {
             ReleaseBoard();
         }

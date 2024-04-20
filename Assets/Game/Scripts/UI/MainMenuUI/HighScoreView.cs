@@ -6,12 +6,10 @@ namespace Game.Scripts.UI.MainMenuUI
     public class HighScoreView : MonoBehaviour
     {
         [SerializeField] private TMP_Text _highScoreText;
-        [SerializeField] private GameObject _gameObject;
 
-
-        public void Toggle(bool state)
+        private void OnEnable()
         {
-            _gameObject.SetActive(state);            
+            _highScoreText.text = $"HIGH SCORE: {PlayerSave.GetHighScore()}";
         }
     }
 }

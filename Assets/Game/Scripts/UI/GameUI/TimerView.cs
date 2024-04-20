@@ -11,24 +11,17 @@ namespace Game.Scripts.UI.GameUI
 
         private void OnEnable()
         {
-            _timer.OnTimerUpdate += OnTimerUpdate;
-            _timer.OnTimeIsUp += OnTimeIsUp;
+            EventBus.OnUpdateTimer += OnUpdateTimer;
         }
 
         private void OnDisable()
         {
-            _timer.OnTimerUpdate -= OnTimerUpdate;
-            _timer.OnTimeIsUp -= OnTimeIsUp;
+            EventBus.OnUpdateTimer -= OnUpdateTimer;
         }
 
-        private void OnTimerUpdate(int duration)
+        private void OnUpdateTimer(int duration)
         {
             _timeText.text = duration.ToString();
-        }
-
-        private void OnTimeIsUp()
-        {
-            _timeText.text = "0";
         }
     }
 }

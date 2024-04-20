@@ -31,13 +31,13 @@ namespace Game.Scripts.GamePlay
         private void OnEnable()
         {
             EventBus.OnSetBoardLevelData += OnSetBoardLevelData;
-            EventBus.OnEndGame += OnEndGame;
+            EventBus.OnTimeIsUp += OnTimeIsUp;
         }
 
         private void OnDisable()
         {
             EventBus.OnSetBoardLevelData -= OnSetBoardLevelData;
-            EventBus.OnEndGame -= OnEndGame;
+            EventBus.OnTimeIsUp -= OnTimeIsUp;
         }
 
         private void OnSetBoardLevelData(BoardLevelData boardLevelData)
@@ -52,7 +52,7 @@ namespace Game.Scripts.GamePlay
             InitializePieces();
         }
 
-        private void OnEndGame()
+        private void OnTimeIsUp()
         {
             foreach (var piece in _pieces)
             {
@@ -117,7 +117,6 @@ namespace Game.Scripts.GamePlay
         
         private async UniTask SwapPieces(int firstPieceIndex, int secondPieceIndex)
         {
-            Debug.Log($"{firstPieceIndex} {secondPieceIndex}");
             (_pieces[firstPieceIndex], _pieces[secondPieceIndex]) =
                 (_pieces[secondPieceIndex], _pieces[firstPieceIndex]);
             

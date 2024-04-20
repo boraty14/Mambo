@@ -11,16 +11,16 @@ namespace Game.Scripts.UI.GameUI
 
         private void OnEnable()
         {
-            _scoreboard.OnScoreUpdate += OnScoreUpdate;
+            EventBus.OnUpdateScore += OnUpdateScore;
             _scoreText.text = _scoreboard.GetScore().ToString();
         }
 
         private void OnDisable()
         {
-            _scoreboard.OnScoreUpdate -= OnScoreUpdate;
+            EventBus.OnUpdateScore -= OnUpdateScore;
         }
 
-        private void OnScoreUpdate(int score)
+        private void OnUpdateScore(int score)
         {
             _scoreText.text = score.ToString();
         }

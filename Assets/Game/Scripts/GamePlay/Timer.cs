@@ -8,9 +8,6 @@ namespace Game.Scripts.GamePlay
 {
     public class Timer : MonoBehaviour
     {
-        public event Action<int> OnTimerUpdate;
-        public event Action OnTimeIsUp;
-
         private DateTime _targetTime;
         private CancellationTokenSource _cts;
         private TimeSpan _currentRemainingTime;
@@ -55,14 +52,14 @@ namespace Game.Scripts.GamePlay
                 }
 
                 _previousRemainingSeconds = currentRemainingTotalSeconds;
-                OnTimerUpdate?.Invoke(currentRemainingTotalSeconds);
+                EventBus.UpdateTimer(currentRemainingTotalSeconds);
                 
                 if (currentRemainingTotalSeconds > 0)
                 {
                     continue;
                 }
                 
-                OnTimeIsUp?.Invoke();
+                EventBus.TimeIsUp();
                 break;
             }
         }
