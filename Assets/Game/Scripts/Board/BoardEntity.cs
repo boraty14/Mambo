@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Game.Scripts.GamePlay;
+using UnityEngine;
 
 namespace Game.Scripts.Board
 {
@@ -15,13 +16,13 @@ namespace Game.Scripts.Board
         private void OnEnable()
         {
             EventBus.OnSetBoardLevelData += OnSetBoardLevelData;
-            EventBus.OnTimeIsUp += OnTimeIsUp;
+            EventBus.OnEndGame += OnEndGame;
         }
 
         private void OnDisable()
         {
             EventBus.OnSetBoardLevelData -= OnSetBoardLevelData;
-            EventBus.OnTimeIsUp -= OnTimeIsUp;
+            EventBus.OnEndGame -= OnEndGame;
         }
 
         private void OnSetBoardLevelData(BoardLevelData boardLevelData)
@@ -30,7 +31,7 @@ namespace Game.Scripts.Board
             GenerateBoard();
         }
 
-        private void OnTimeIsUp()
+        private void OnEndGame(GameData gameData)
         {
             ReleaseBoard();
         }

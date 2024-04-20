@@ -1,4 +1,3 @@
-using System;
 using Cysharp.Threading.Tasks;
 using Game.Scripts.GamePlay;
 using UnityEngine;
@@ -16,7 +15,6 @@ namespace Game.Scripts.Board
 
         private Camera _camera;
         private int _selectedPieceIndex = UnselectedIndex;
-        private bool _isProcessingMove;
 
         private void OnEnable()
         {
@@ -40,7 +38,7 @@ namespace Game.Scripts.Board
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            if (_isProcessingMove)
+            if (_moveProcessor.IsProcessingMove)
             {
                 return;
             }
@@ -79,7 +77,7 @@ namespace Game.Scripts.Board
 
         public void OnDrag(PointerEventData eventData)
         {
-            if (_isProcessingMove)
+            if (_moveProcessor.IsProcessingMove)
             {
                 return;
             }
@@ -96,10 +94,8 @@ namespace Game.Scripts.Board
 
         private async UniTaskVoid SwapSelectedPieces(int firstPieceIndex, int secondPieceIndex)
         {
-            _isProcessingMove = true;
             await _moveProcessor.ProcessMove(firstPieceIndex, secondPieceIndex);
             _selectedPieceIndex = UnselectedIndex;
-            _isProcessingMove = false;
         }
 
         private Vector3 GetBoardPosition(PointerEventData eventData)

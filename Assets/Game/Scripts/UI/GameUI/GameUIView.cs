@@ -1,17 +1,19 @@
-﻿namespace Game.Scripts.UI.GameUI
+﻿using Game.Scripts.GamePlay;
+
+namespace Game.Scripts.UI.GameUI
 {
     public class GameUIView : ViewBase
     {
         private void OnEnable()
         {
             EventBus.OnStartGame += OnStartGame;
-            EventBus.OnTimeIsUp += OnTimeIsUp;
+            EventBus.OnEndGame += OnEndGame;
         }
 
         private void OnDisable()
         {
             EventBus.OnStartGame -= OnStartGame;
-            EventBus.OnTimeIsUp -= OnTimeIsUp;
+            EventBus.OnEndGame -= OnEndGame;
         }
 
         private void OnStartGame()
@@ -19,7 +21,7 @@
             ToggleView(true);
         }
 
-        private void OnTimeIsUp()
+        private void OnEndGame(GameData gameData)
         {
             ToggleView(false);
         }

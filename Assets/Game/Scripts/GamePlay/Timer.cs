@@ -52,10 +52,10 @@ namespace Game.Scripts.GamePlay
                 }
 
                 _previousRemainingSeconds = currentRemainingTotalSeconds;
-                EventBus.UpdateTimer(currentRemainingTotalSeconds);
                 
-                if (currentRemainingTotalSeconds > 0)
+                if (currentRemainingTotalSeconds >= 0)
                 {
+                    EventBus.UpdateTimer(currentRemainingTotalSeconds);
                     continue;
                 }
                 

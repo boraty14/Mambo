@@ -23,6 +23,9 @@ namespace Game.Scripts
         
         public static void TimeIsUp() => OnTimeIsUp?.Invoke();
         public static event Action OnTimeIsUp;
+
+        public static void CalculateScore() => OnCalculateScore?.Invoke();
+        public static event Action OnCalculateScore;
         
         public static void EndGame(GameData gameData) => OnEndGame?.Invoke(gameData);
         public static event Action<GameData> OnEndGame;

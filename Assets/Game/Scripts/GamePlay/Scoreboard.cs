@@ -8,18 +8,25 @@ namespace Game.Scripts.GamePlay
         
         private void OnEnable()
         {
-            EventBus.OnBlast += OnBlast;
-            EventBus.OnTimeIsUp += OnTimeIsUp;
+            EventBus.OnStartGame += OnStartGame;
+            EventBus.OnCalculateScore += OnCalculateScore;
         }
 
         private void OnDisable()
         {
-            EventBus.OnBlast -= OnBlast;
-            EventBus.OnTimeIsUp -= OnTimeIsUp;
+            EventBus.OnStartGame -= OnStartGame;
+            EventBus.OnCalculateScore -= OnCalculateScore;
         }
 
-        private void OnTimeIsUp()
+        private void OnStartGame()
         {
+            EventBus.OnBlast += OnBlast;
+        }
+
+        private void OnCalculateScore()
+        {
+            EventBus.OnBlast -= OnBlast;
+            
             var highScore = PlayerSave.GetHighScore();
             var isHighScore = _currentScore > highScore;
             var gameData = new GameData()
